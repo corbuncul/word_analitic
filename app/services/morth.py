@@ -3,7 +3,7 @@ import string
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-# from spacy import load
+from spacy import load
 from spacy.lang.ru import Russian
 from spacy.lang.en import English
 
@@ -31,11 +31,11 @@ def normal_form(word: str) -> str:
     """Переводит слово в нормальную форму."""
     if has_cyrillic(word):
         nlp = Russian()
-        # load_model = load('ru_core_news_sm')
+        load_model = load('ru_core_news_sm')
     else:
         nlp = English()
-        # load_model = load('en_core_web_sm')
-    lemma = nlp(word)[0].lemma_
+        load_model = load('en_core_web_sm')
+    lemma = load_model(word)[0].lemma_
     print(lemma, '\n')
     return lemma
 
