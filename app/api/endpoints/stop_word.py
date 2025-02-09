@@ -35,7 +35,7 @@ async def get_all_flight(
     dependencies=[Depends(current_superuser)],
 )
 async def create_new_stop_word(
-    stop_word: stopWordCreate,
+    stop_word: StopWordCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Создание ключевого слова. Только для суперюзеров."""

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import (
     declarative_base,
@@ -19,7 +19,6 @@ class PreBase:
         return cls.__name__.lower()
 
     id = Column(Integer, primary_key=True)
-    word = Column(String(MAX_LENGHT), unique=True)
 
 
 Base = declarative_base(cls=PreBase)

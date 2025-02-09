@@ -55,4 +55,3 @@ async def remove_key_word(
     """Удаление ключевого слова. Только для суперюзеров."""
     key_word = await check_key_word_exists(session, key_word_id)
     return await key_word_crud.remove(key_word, session)
-

@@ -1,6 +1,3 @@
-from typing import Optional
-
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -49,11 +46,11 @@ class CRUDBase:
         return db_obj
 
     async def create_multi(
-        self, words: list[str], session: AsyncSession
+        self, objects_in: list, session: AsyncSession
     ):
         """Создание объектов."""
         db_obj_list = []
-        for word in words:
+        for obj_in in objects_in:
             obj_in_data = obj_in.dict()
             db_obj = self.model(**obj_in_data)
             db_obj_list.append(db_obj)

@@ -1,4 +1,3 @@
-from datetime import datetime
 from http import HTTPStatus
 
 from fastapi import HTTPException
@@ -55,7 +54,7 @@ async def check_stop_word_duplicate(
         )
 
 
-async def check_key_word_exists(
+async def check_stop_word_exists(
     session: AsyncSession,
     word: str,
 ) -> StopWord:
