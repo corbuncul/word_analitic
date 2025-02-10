@@ -11,8 +11,7 @@ import nltk
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_first_superuser()
-    nltk.download('popular')
-    nltk.download('punkt_tab')
+    nltk.download('stopwords')
     yield
 
 app = FastAPI(

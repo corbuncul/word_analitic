@@ -1,11 +1,11 @@
 import re
 import string
 
-from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from spacy import load
-from spacy.lang.ru import Russian
-from spacy.lang.en import English
+
+ru_model = load('ru_core_news_sm')
+en_model = load('en_core_web_sm')
 
 
 def has_cyrillic(text: str) -> bool:
@@ -14,9 +14,9 @@ def has_cyrillic(text: str) -> bool:
 
 
 def tokenize_text(text: str) -> list[str]:
-    """удаляет из текста знаки препинания и разбивает на слова."""
+    """Удаляет из текста знаки препинания и разбивает на слова."""
     clean = ''.join([char for char in text if char not in string.punctuation])
-    return word_tokenize(clean)
+    return re.findall(r'\b\w+\b', clean)
 
 
 def delete_stopwords(text: list[str]) -> list[str]:
@@ -30,13 +30,9 @@ def delete_stopwords(text: list[str]) -> list[str]:
 def normal_form(word: str) -> str:
     """Переводит слово в нормальную форму."""
     if has_cyrillic(word):
-        nlp = Russian()
-        load_model = load('ru_core_news_sm')
+        lemma = ru_model(word)[0].lemma_
     else:
-        nlp = English()
-        load_model = load('en_core_web_sm')
-    lemma = load_model(word)[0].lemma_
-    print(lemma, '\n')
+        lemma = en_model(word)[0].lemma_
     return lemma
 
 

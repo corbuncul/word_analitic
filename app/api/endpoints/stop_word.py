@@ -13,6 +13,7 @@ from app.schemas.stop_word import (
     StopWordCreate,
     StopWordDB,
 )
+from app.services.morth import normal_form
 
 
 router = APIRouter()
@@ -25,7 +26,7 @@ router = APIRouter()
 async def get_all_flight(
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Список всех ключевых слов."""
+    """Список всех стоп-слов."""
     return await stop_word_crud.get_all(session)
 
 
@@ -38,7 +39,8 @@ async def create_new_stop_word(
     stop_word: StopWordCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Создание ключевого слова. Только для суперюзеров."""
+    """Создание стоп-слова. Только для суперюзеров."""
+    stop_word.word = normal_form(stop_word.word)
     await check_stop_word_duplicate(session, stop_word.word)
     return await stop_word_crud.create(stop_word, session)
 
@@ -52,6 +54,6 @@ async def remove_stop_word(
     stop_word_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Удаление ключевого слова. Только для суперюзеров."""
+    """Удаление стоп-слова. Только для суперюзеров."""
     stop_word = await check_stop_word_exists(session, stop_word_id)
     return await stop_word_crud.remove(stop_word, session)
