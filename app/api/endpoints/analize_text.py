@@ -1,7 +1,4 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
@@ -35,5 +32,4 @@ async def create_new_key_word(
         elif await stop_word_crud.get_id_by_word(word, session):
             stop_words.append(word)
     data = {'key_words': key_words, 'stop_words': stop_words}
-    json_data = jsonable_encoder(data)
-    return JSONResponse(content=json_data)
+    return data

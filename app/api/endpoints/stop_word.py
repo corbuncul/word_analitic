@@ -46,14 +46,14 @@ async def create_new_stop_word(
 
 
 @router.delete(
-    '/{stop_word_id}',
+    '/{stop_word}',
     response_model=StopWordDB,
     dependencies=[Depends(current_superuser)],
 )
 async def remove_stop_word(
-    stop_word_id: int,
+    stop_word: str,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Удаление стоп-слова. Только для суперюзеров."""
-    stop_word = await check_stop_word_exists(session, stop_word_id)
-    return await stop_word_crud.remove(stop_word, session)
+    stop_word_db = await check_stop_word_exists(session, stop_word)
+    return await stop_word_crud.remove(stop_word_db, session)

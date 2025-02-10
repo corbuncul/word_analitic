@@ -51,9 +51,9 @@ async def create_new_key_word(
     dependencies=[Depends(current_superuser)],
 )
 async def remove_key_word(
-    key_word_id: int,
+    key_word: str,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Удаление ключевого слова. Только для суперюзеров."""
-    key_word = await check_key_word_exists(session, key_word_id)
-    return await key_word_crud.remove(key_word, session)
+    key_word_db = await check_key_word_exists(session, key_word)
+    return await key_word_crud.remove(key_word_db, session)
