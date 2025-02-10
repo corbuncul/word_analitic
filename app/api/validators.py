@@ -3,8 +3,7 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.key_word import key_word_crud
-from app.crud.stop_word import stop_word_crud
+from app.crud import key_word_crud, stop_word_crud
 from app.models import KeyWord, StopWord
 
 
@@ -33,7 +32,8 @@ async def check_key_word_exists(
     )
     if key_word_id is None:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Ключевое слово не найдено!'
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Ключевое слово не найдено!'
         )
     key_word = await key_word_crud.get(key_word_id, session)
     return key_word
@@ -64,7 +64,8 @@ async def check_stop_word_exists(
     )
     if stop_word_id is None:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Стоп-слово не найдено!'
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Стоп-слово не найдено!'
         )
     stop_word = await stop_word_crud.get(stop_word_id, session)
     return stop_word

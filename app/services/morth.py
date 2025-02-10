@@ -1,14 +1,11 @@
 import re
 import string
 
-from nltk.corpus import stopwords
 from spacy import load
 
 ru_model = load('ru_core_news_sm')
 en_model = load('en_core_web_sm')
-stop_ru = stopwords.words('russian')
-stop_en = stopwords.words('english')
-stop_words = stop_en + stop_ru
+stop_words = ru_model.Defaults.stop_words.union(en_model.Defaults.stop_words)
 
 
 def has_cyrillic(text: str) -> bool:
