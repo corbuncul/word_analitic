@@ -40,7 +40,7 @@ async def create_new_key_word(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Создание ключевого слова. Только для суперюзеров."""
-    key_word.word = normal_form(key_word.word)
+    key_word.word = normal_form(key_word.word.lower())
     await check_key_word_duplicate(session, key_word.word)
     return await key_word_crud.create(key_word, session)
 

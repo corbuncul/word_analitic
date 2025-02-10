@@ -40,7 +40,7 @@ async def create_new_stop_word(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Создание стоп-слова. Только для суперюзеров."""
-    stop_word.word = normal_form(stop_word.word)
+    stop_word.word = normal_form(stop_word.word.lower())
     await check_stop_word_duplicate(session, stop_word.word)
     return await stop_word_crud.create(stop_word, session)
 

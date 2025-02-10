@@ -6,6 +6,9 @@ from spacy import load
 
 ru_model = load('ru_core_news_sm')
 en_model = load('en_core_web_sm')
+stop_ru = stopwords.words('russian')
+stop_en = stopwords.words('english')
+stop_words = stop_en + stop_ru
 
 
 def has_cyrillic(text: str) -> bool:
@@ -15,15 +18,14 @@ def has_cyrillic(text: str) -> bool:
 
 def tokenize_text(text: str) -> list[str]:
     """Удаляет из текста знаки препинания и разбивает на слова."""
-    clean = ''.join([char for char in text if char not in string.punctuation])
+    clean = ''.join(
+        [char.lower() for char in text if char not in string.punctuation]
+    )
     return re.findall(r'\b\w+\b', clean)
 
 
 def delete_stopwords(text: list[str]) -> list[str]:
     """Удаляет стоп-слова из списка."""
-    stop_ru = stopwords.words('russian')
-    stop_en = stopwords.words('english')
-    stop_words = stop_en + stop_ru
     return [word for word in text if word not in stop_words]
 
 
