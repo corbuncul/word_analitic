@@ -45,12 +45,16 @@ def lemmatize_tokens(tokens: list[str]) -> list[str]:
     return [lemmatize_word(token) for token in tokens]
 
 
-def process_text_pipeline(text: str) -> list[str]:
+def process_text_pipeline(
+    text: str, delete_stop_words: bool = False
+) -> list[str]:
     """
+    Обработка текста.
     Токенизирует, удаляет стоп-слова, лемматизирует
     и возвращает итоговый список лемм.
     """
     tokens = tokenize_text(text)
-    # tokens_no_stop = delete_stopwords(tokens)
+    if delete_stop_words:
+        tokens = delete_stopwords(tokens)
     lemmas = lemmatize_tokens(tokens)
     return lemmas

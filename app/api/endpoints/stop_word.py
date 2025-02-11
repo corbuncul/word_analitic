@@ -8,7 +8,9 @@ from app.api.validators import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import stop_word_crud
-from app.schemas.stop_word import StopwordCreate, StopwordDB
+from app.schemas.stop_word import (
+    StopwordCreate, StopWordsCreateList, StopwordDB
+)
 from app.services.morph import lemmatize_word
 
 
@@ -41,6 +43,28 @@ async def create_new_stop_word(
         session, stop_word.word, stop_word_crud, 'стоп-слово'
     )
     return await stop_word_crud.create(stop_word, session)
+
+
+@router.post(
+        '/batch', response_model=list[StopwordDB],
+        dependencies=[Depends(current_superuser)]
+    )
+async def create_key_words_batch(
+    words_in: StopWordsCreateList,
+    session: AsyncSession = Depends(get_async_session),
+):
+    """Создание нескольких стоп-слов за один раз."""
+    created_objs = []
+    for word in words_in.words:
+        lemma = lemmatize_word(word.lower())
+        await check_word_duplicate(
+            session, lemma, stop_word_crud, 'стоп-слово'
+        )
+        new_sw = await stop_word_crud.create(
+            StopwordCreate(word=lemma), session
+        )
+        created_objs.append(new_sw)
+    return created_objs
 
 
 @router.post(
