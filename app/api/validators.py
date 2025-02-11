@@ -5,14 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def check_word_duplicate(
-    session: AsyncSession, word: str, crud_model, model_name: str
+    session: AsyncSession, word: str, crud_model
 ):
     """Общая проверка на дубликаты"""
-    if await crud_model.get_id_by_word(word, session):
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'Такое {model_name} уже существует!'
-        )
+    word_id = await crud_model.get_id_by_word(word, session)
+    return word_id
 
 
 async def check_word_exists(
