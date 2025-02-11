@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 from app.crud import key_word_crud, stop_word_crud
-from app.services.morth import (
+from app.services.morph import (
     delete_stopwords,
     normalise_text,
     tokenize_text
@@ -21,19 +20,24 @@ router = APIRouter()
     '/',
     response_model=Words
 )
-async def create_new_key_word(
+async def analyze_text(
     text: str,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Анализ текста."""
-    key_words = []
-    stop_words = []
+    if not text.strip():
+        raise HTTPException(
+            status_code=400, detail='Текст для анализа не может быть пустым.'
+        )
     tokens = normalise_text(delete_stopwords(tokenize_text(text)))
-    for word in tokens:
-        if await key_word_crud.get_id_by_word(word, session):
-            key_words.append(word)
-        elif await stop_word_crud.get_id_by_word(word, session):
-            stop_words.append(word)
-    data = {'key_words': key_words, 'stop_words': stop_words}
-    json_data = jsonable_encoder(data)
-    return JSONResponse(content=json_data)
+    if not tokens:
+        return JSONResponse(content={'key_words': [], 'stop_words': []})
+    key_words_set = set(await key_word_crud.get_all_words(session))
+    stop_words_set = set(await stop_word_crud.get_all_words(session))
+    key_words = [word for word in tokens if word in key_words_set]
+    stop_words = [word for word in tokens if word in stop_words_set]
+    return JSONResponse(
+        content=jsonable_encoder(
+            {'key_words': key_words, 'stop_words': stop_words}
+        )
+    )

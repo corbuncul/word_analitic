@@ -3,6 +3,7 @@ from pydantic import (
     ConfigDict,
     Field
 )
+
 from app.core.db import MAX_LENGHT
 
 

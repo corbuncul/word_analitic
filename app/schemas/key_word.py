@@ -3,13 +3,18 @@ from pydantic import (
     ConfigDict,
     Field
 )
+
 from app.core.db import MAX_LENGHT
 
 
-class KeyWordCreate(BaseModel):
+class KeywordCreate(BaseModel):
     word: str = Field(..., min_length=1, max_length=MAX_LENGHT)
     model_config = ConfigDict(extra='forbid', from_attributes=True)
 
 
-class KeyWordDB(KeyWordCreate):
+class KeyWordsCreateList(BaseModel):
+    words: list[str]
+
+
+class KeywordDB(KeywordCreate):
     id: int
