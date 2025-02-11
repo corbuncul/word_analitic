@@ -20,7 +20,7 @@ main_router.include_router(
 )
 main_router.include_router(
     text_router,
-    prefix='/text',
+    prefix='/analyze',
     tags=['Анализ текста']
 )
 main_router.include_router(user_router)

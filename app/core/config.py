@@ -7,7 +7,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class ConfigBase(BaseSettings):
     """Базовые настройки."""
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_file='.env', env_file_encoding='utf-8',
+        extra='ignore', env_prefix=''
     )
 
 
@@ -32,7 +33,7 @@ class ConfigSuperUser(ConfigBase):
     superuser_password: Optional[SecretStr] = Field(default=None)
 
 
-class Config(BaseSettings):
+class Config(ConfigBase):
     """Все настройки приложения."""
     app: ConfigApp = Field(default_factory=ConfigApp)
     db: ConfigDB = Field(default_factory=ConfigDB)
@@ -43,4 +44,4 @@ class Config(BaseSettings):
         return cls()
 
 
-config = Config.load()
+config = Config()

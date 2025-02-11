@@ -27,12 +27,12 @@ class CRUDBase:
         db_obj_id = await session.execute(
             select(self.model.id).where(self.model.word == word)
         )
-        return db_obj_id.scalars().first()
+        return db_obj_id.scalars().first() or None
 
-    async def get_all(self, session: AsyncSession):
+    async def get_all_words(self, session: AsyncSession):
         """Получение всех объектов."""
-        db_objs = await session.execute(select(self.model))
-        return db_objs.scalars().all()
+        db_objs_word = await session.execute(select(self.model.word))
+        return db_objs_word.scalars().all()
 
     async def create(
         self, obj_in, session: AsyncSession
@@ -56,7 +56,9 @@ class CRUDBase:
             db_obj_list.append(db_obj)
         session.add_all(db_obj_list)
         await session.commit()
-        await session.expire_all()
+
+        for obj in db_obj_list:
+            await session.refresh(obj)
         return db_obj_list
 
     async def remove(
@@ -66,5 +68,6 @@ class CRUDBase:
     ):
         """Удаление объекта."""
         await session.delete(db_obj)
+        await session.flush()
         await session.commit()
         return db_obj

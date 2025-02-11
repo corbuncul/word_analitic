@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
 
 from app.core.config import config
 
-MAX_LENGHT = 20
+MAX_LENGHT = 50
 
 
 class PreBase:

@@ -1,5 +1,5 @@
-from app.models import StopWord
+from app.models import Stopword
 from app.crud import CRUDBase
 
 
-stop_word_crud = CRUDBase(StopWord)
+stop_word_crud = CRUDBase(Stopword)

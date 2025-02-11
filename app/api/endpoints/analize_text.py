@@ -1,13 +1,11 @@
-from fastapi import APIRouter, Depends
+from http import HTTPStatus
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 from app.crud import key_word_crud, stop_word_crud
-from app.services.morth import (
-    delete_stopwords,
-    normalise_text,
-    tokenize_text
-)
+from app.services.morph import process_text_pipeline
 from app.schemas.analise import Words
 
 
@@ -18,18 +16,20 @@ router = APIRouter()
     '/',
     response_model=Words
 )
-async def create_new_key_word(
+async def analyze_text(
     text: str,
     session: AsyncSession = Depends(get_async_session),
 ):
     """Анализ текста."""
-    key_words = []
-    stop_words = []
-    tokens = normalise_text(delete_stopwords(tokenize_text(text)))
-    for word in tokens:
-        if await key_word_crud.get_id_by_word(word, session):
-            key_words.append(word)
-        elif await stop_word_crud.get_id_by_word(word, session):
-            stop_words.append(word)
-    data = {'key_words': key_words, 'stop_words': stop_words}
+    if not text.strip():
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Текст для анализа не может быть пустым.'
+        )
+    tokens = process_text_pipeline(text)
+    data = {'key_words': [], 'stop_words': []}
+    key_words_set = set(await key_word_crud.get_all_words(session))
+    stop_words_set = set(await stop_word_crud.get_all_words(session))
+    data['key_words'] = [word for word in tokens if word in key_words_set]
+    data['stop_words'] = [word for word in tokens if word in stop_words_set]
     return data
