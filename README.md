@@ -66,3 +66,4 @@ uvicorn app.main:app
 
 Проект будет доступен по адресу http://localhost:8000/
 Подергать ручки http://localhost:8000/docs/
+Пощупать админку http://localhost:8000/admin/
