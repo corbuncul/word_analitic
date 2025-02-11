@@ -13,7 +13,7 @@ from app.schemas.key_word import (
     KeywordCreate,
     KeywordDB,
 )
-from app.services.morph import normal_form
+from app.services.morph import lemmatize_word
 
 
 router = APIRouter()
@@ -21,13 +21,13 @@ router = APIRouter()
 
 @router.get(
     '/',
-    response_model=list[KeywordDB],
+    response_model=list[str],
 )
 async def get_all_keywords(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Список всех ключевых слов."""
-    return await key_word_crud.get_all(session)
+    return await key_word_crud.get_all_words(session)
 
 
 @router.post(
@@ -40,7 +40,7 @@ async def create_new_key_word(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Создание ключевого слова. Только для суперюзеров."""
-    key_word.word = normal_form(key_word.word.lower())
+    key_word.word = lemmatize_word(key_word.word.lower())
     await check_word_duplicate(
         session, key_word.word, key_word_crud, 'ключевое слово'
     )
@@ -58,7 +58,7 @@ async def create_key_words_batch(
     """Создание нескольких ключевых слов за один раз."""
     created_objs = []
     for word in words_in.words:
-        lemma = normal_form(word.lower())
+        lemma = lemmatize_word(word.lower())
         await check_word_duplicate(
             session, lemma, key_word_crud, 'ключевое слово'
         )
@@ -97,7 +97,7 @@ async def upload_key_words_file(
         cleaned = line.strip()
         if not cleaned:
             continue
-        lemma = normal_form(cleaned.lower())
+        lemma = lemmatize_word(cleaned.lower())
         await check_word_duplicate(
             session, lemma, key_word_crud, 'ключевое слово'
         )

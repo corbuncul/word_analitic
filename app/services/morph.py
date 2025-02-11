@@ -1,15 +1,14 @@
 import re
 import string
 
-from nltk.corpus import stopwords
 import spacy
 
 
 nlp_ru = spacy.load('ru_core_news_sm')
 nlp_en = spacy.load('en_core_web_sm')
 
-STOP_RU = set(stopwords.words('russian'))
-STOP_EN = set(stopwords.words('english'))
+STOP_RU = nlp_ru.Defaults.stop_words
+STOP_EN = nlp_en.Defaults.stop_words
 STOP_WORDS = STOP_RU.union(STOP_EN)
 
 
@@ -52,6 +51,6 @@ def process_text_pipeline(text: str) -> list[str]:
     и возвращает итоговый список лемм.
     """
     tokens = tokenize_text(text)
-    tokens_no_stop = delete_stopwords(tokens)
-    lemmas = lemmatize_tokens(tokens_no_stop)
+    # tokens_no_stop = delete_stopwords(tokens)
+    lemmas = lemmatize_tokens(tokens)
     return lemmas

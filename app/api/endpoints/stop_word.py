@@ -9,7 +9,7 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import stop_word_crud
 from app.schemas.stop_word import StopwordCreate, StopwordDB
-from app.services.morph import normal_form
+from app.services.morph import lemmatize_word
 
 
 router = APIRouter()
@@ -17,13 +17,13 @@ router = APIRouter()
 
 @router.get(
     '/',
-    response_model=list[StopwordDB],
+    response_model=list[str],
 )
 async def get_all_stop_words(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Список всех стоп-слов."""
-    return await stop_word_crud.get_all(session)
+    return await stop_word_crud.get_all_words(session)
 
 
 @router.post(
@@ -36,7 +36,7 @@ async def create_new_stop_word(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Создание стоп-слова. Только для суперюзеров."""
-    stop_word.word = normal_form(stop_word.word.lower())
+    stop_word.word = lemmatize_word(stop_word.word.lower())
     await check_word_duplicate(
         session, stop_word.word, stop_word_crud, 'стоп-слово'
     )
@@ -54,12 +54,12 @@ async def upload_stop_words_file(
     """Загрузка списка стоп-слов из файла."""
     lines = (await file.read()).decode("utf-8").splitlines()
     created_objs = []
-    
+
     for line in lines:
         cleaned = line.strip()
         if not cleaned:
             continue
-        lemma = normal_form(cleaned.lower())
+        lemma = lemmatize_word(cleaned.lower())
         await check_word_duplicate(
             session, lemma, stop_word_crud, 'стоп-слово'
         )

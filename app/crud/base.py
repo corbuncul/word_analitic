@@ -29,10 +29,10 @@ class CRUDBase:
         )
         return db_obj_id.scalars().first() or None
 
-    async def get_all(self, session: AsyncSession):
+    async def get_all_words(self, session: AsyncSession):
         """Получение всех объектов."""
-        db_objs = await session.execute(select(self.model))
-        return db_objs.scalars().all()
+        db_objs_word = await session.execute(select(self.model.word))
+        return db_objs_word.scalars().all()
 
     async def create(
         self, obj_in, session: AsyncSession
