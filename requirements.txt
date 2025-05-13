@@ -27,7 +27,7 @@ fastapi-users==14.0.1
 fastapi-users-db-sqlalchemy==7.0.0
 filelock==3.17.0
 greenlet==3.1.1
-h11==0.14.0
+h11==0.16.0
 identify==2.6.7
 idna==3.10
 Jinja2==3.1.5
