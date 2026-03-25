@@ -57,7 +57,7 @@ PyJWT==2.10.1
 pymorphy3==2.0.2
 pymorphy3-dicts-ru==2.4.417150.4580142
 python-dotenv==1.0.1
-python-multipart==0.0.20
+python-multipart==0.0.22
 PyYAML==6.0.2
 regex==2024.11.6
 requests==2.32.4
